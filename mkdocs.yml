@@ -6,20 +6,7 @@ extra:
 
 nav:
   - Quickstart:
-    - Introduction: another.md
     - Quickstart: quickstart.ipynb
-  - Installation:
-    - Installation: installation.md
-  - Tutorials:
-    - Defining a Causal Model: defining_causal_model.md
-    - Causal Inference: causal_inference.md
-    - Structure Learning: structure_learning.md
-    - Interventions: intervention_design.md
-    - Learning with noise: learning_with_noise.md
-    - Optimal Interventions: optimal_interventions.md
-  - Docs: 
-    - API Reference: api_reference.md
-    - Contributing: contributing.md
 
 plugins:
   - search:
