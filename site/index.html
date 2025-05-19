@@ -48,36 +48,7 @@
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Quickstart</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="" href="another.md">Introduction</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="quickstart/">Quickstart</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Installation</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="" href="installation.md">Installation</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Tutorials</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="" href="defining_causal_model.md">Defining a Causal Model</a>
-                  </li>
-                  <li class="toctree-l1"><a class="" href="causal_inference.md">Causal Inference</a>
-                  </li>
-                  <li class="toctree-l1"><a class="" href="structure_learning.md">Structure Learning</a>
-                  </li>
-                  <li class="toctree-l1"><a class="" href="intervention_design.md">Interventions</a>
-                  </li>
-                  <li class="toctree-l1"><a class="" href="learning_with_noise.md">Learning with noise</a>
-                  </li>
-                  <li class="toctree-l1"><a class="" href="optimal_interventions.md">Optimal Interventions</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Docs</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="" href="api_reference.md">API Reference</a>
-                  </li>
-                  <li class="toctree-l1"><a class="" href="contributing.md">Contributing</a>
                   </li>
               </ul>
       </div>
@@ -104,68 +75,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="dolearn-causal-discovery-through-interventions">DoLearn: Causal Discovery through Interventions</h1>
-<h2 id="installation">Installation</h2>
-<p>Installing do-learn is easy.</p>
-<pre><code class="language-py">pip install do-learn
-</code></pre>
-<h2 id="defining-causal-model">Defining causal model</h2>
-<p>Let's start by instantiating a causal model and providing nodes and edges as arguments.</p>
-<pre><code class="language-py">from do_learn import CausalGraph
-
-nodes = ['A', 'B', 'C']
-edges = [('A', 'B'), ('B', 'C')]
-graph = CausalGraph(nodes,edges)
-
-# Use the display() function to show the graph
-graph.display()
-</code></pre>
-<p><img alt="Image title" src="../assets/output.png" /></p>
-<p>We can also generate a random causal model by calling <code>generate_dag()</code> and providing the number of nodes and edge probability. </p>
-<pre><code class="language-py">from do_learn import generate_dag
-random_graph = generate_dag(num_nodes=5, edge_prob=.8)
-random_graph.display()
-</code></pre>
-<p><img alt="Image title" src="../assets/random_graph.png" /></p>
-<p>Now let us sample from our first graph using the <code>sample()</code> function</p>
-<pre><code class="language-py">graph.sample()
-# Output: {'A': 0, 'B': 0, 'C': 0}
-</code></pre>
-<p>Since no initial values were given each variable deafults to 0.</p>
-<p>We can carry out an intervention on a variable by calling the <code>do()</code> function. It returns a dictionary with 3 keys (pre, post, diff), represeting the values of each variable before and after the intervention and finally the difference between these values.</p>
-<pre><code class="language-py">graph.do('A', 1)
-# Output: {'pre': {'A': 0, 'B': 0.0, 'C': 0.0},
-#          'post': {'A': 1, 'B': 1.0, 'C': 1.0},
-#          'diff': {'A': {'B': 1.0, 'C': 1.0}}}
-</code></pre>
-<p>In our simple example A causes B which causes C, so when A is set to 1 the other two variables change as well.</p>
-<h2 id="learning">Learning</h2>
-<p>The previous example illustrated sampling from a known causal graph and inferring the results of interventions, however in many cases we are interested in learning an unknown causal graph and using interventions to probe for causal relations.</p>
-<h3 id="example-1">Example 1</h3>
-<p>Let's start with the simple case of two variables X and Y.
-Given two variables, there exist three possible causal structures. Either X causes Y, Y causes X or X and Y are independent.</p>
-<p>DoLearn allows us to represent these possible graphs using the <code>EquivalenceClass</code> class. We can plot each one of these graphs using the <code>display_all()</code> function or simply call <code>display_essential_graph()</code> to represent all graphs in one</p>
-<pre><code class="language-py">true_graph = CausalGraph(['A','B'], [('A','B')])
-possible_graphs = generate_all_dags(2)
-equivalence_class = EquivalenceClass(possible_graphs)
-
-equivalence_class.display_essential_graph()
-</code></pre>
-<p><img alt="Essential Graph" src="../assets/essential_graph.png" /></p>
-<p>A dashed undirected edge represent that the edge either goes from X0 to X1, from X1 to X0 or doesn't exist (making X0 and X1 independent) and thereby visualizes all three possible graphs at once.</p>
-<p>If we slice the possible graphs to only include 2 of them we get a different essential graph. Now we see a directed dashed edge from X0 to X1, representing that the edge either X0 to X1 or doesn't exist.</p>
-<pre><code class="language-py">equivalence_class = EquivalenceClass(possible_graphs[1:3])
-equivalence_class.display_essential_graph()
-</code></pre>
-<p><img alt="Sliced Essential Graph" src="../assets/sliced_essential_graph.png" /></p>
-<p>When learning a causal graph we want to reduce the equivalence class of possible graphs by carrying out interventions and ruling out models that aren't consistent with our data. Hopefully with enough interventions we will end up with the true underlying structure.</p>
-<p>Let's try learning the true graph in 3-variable setting. First we will define the true causal graph as follows:</p>
-<pre><code class="language-py">true_graph = CausalGraph(['A','B','C'], [('A','B'),('A','C'),('B','C')])
-possible_graphs = generate_all_dags(3)
-equivalence_class = EquivalenceClass(possible_graphs)
-
-equivalence_class.display_essential_graph()
-</code></pre>
-<p><img alt="Nodes Essential Graph" src="../assets/essential_graph_3_nodes.png" /></p>
+<p>Welcome to this project, to get started quickly go to <a href="quickstart">Quickstart</a></p>
               
             </div>
           </div><footer>
@@ -209,5 +119,5 @@ equivalence_class.display_essential_graph()
 
 <!--
 MkDocs version : 1.6.1
-Build Date UTC : 2025-05-19 08:10:50.384998+00:00
+Build Date UTC : 2025-05-19 08:25:13.502020+00:00
 -->
