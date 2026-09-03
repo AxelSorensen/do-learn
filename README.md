@@ -42,4 +42,4 @@ mkdocs serve
 
 ## Status
 
-🧪 Small research-grade library — last touched mid-2025, no packaging (`setup.py`/`pyproject.toml`) or test suite, so it's used by importing the `do_learn` folder directly rather than installing as a package.
+🔧 `requirements.txt` was missing `matplotlib` (imported directly by `causal_graph.py`), so `pip install -r requirements.txt` succeeded but importing `do_learn` failed with `ModuleNotFoundError`. Fixed by adding `matplotlib==3.11.1` to `requirements.txt`. Verified working as of 2026-09-03: `pip install -r requirements.txt` then `from do_learn.causal_graph import CausalGraph; CausalGraph(nodes=["A","B"], edges=[("A","B")]).sample()` runs cleanly. Still no packaging (`setup.py`/`pyproject.toml`) or test suite — used by importing the `do_learn` folder directly rather than installing as a package.
