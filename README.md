@@ -1,0 +1,45 @@
+# 🔗 DoLearn
+
+A small Python library for building causal graphs, sampling from them, and simulating interventions.
+
+## Features
+
+- 🕸️ **Causal graph structure** — `CausalGraph` extends NetworkX's `DiGraph`, tracking parent relationships between nodes automatically as edges are added
+- 🎲 **Sampling** — draw values from the graph's current state, respecting the causal structure
+- ✋ **Interventions** — do-calculus style interventions (the "do" in DoLearn) that override a node's value and propagate downstream effects
+- 📊 **Visualization** — built on `matplotlib` for plotting graphs
+- 📚 **Docs site** — an MkDocs + mkdocstrings site (`mkdocs.yml`) with an API reference and a Jupyter notebook quickstart
+
+## Installation
+
+```bash
+git clone <this repo>
+cd do-learn
+pip install -r requirements.txt
+```
+
+## Usage
+
+```python
+from do_learn.causal_graph import CausalGraph
+
+g = CausalGraph(nodes=["A", "B"], edges=[("A", "B")])
+values = g.sample()
+```
+
+To build and serve the docs locally:
+
+```bash
+mkdocs serve
+```
+
+## Built with
+
+- [NetworkX](https://networkx.org/)
+- [NumPy](https://numpy.org/)
+- [Matplotlib](https://matplotlib.org/)
+- [MkDocs](https://www.mkdocs.org/) + [mkdocstrings](https://mkdocstrings.github.io/) for docs
+
+## Status
+
+🧪 Small research-grade library — last touched mid-2025, no packaging (`setup.py`/`pyproject.toml`) or test suite, so it's used by importing the `do_learn` folder directly rather than installing as a package.
